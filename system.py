@@ -38,6 +38,8 @@ soup = bs(html_content, "html.parser")
 
 # Extract listings
 data = []
+seen_titles = set()
+
 listings = soup.find_all("div")
 filtered_listings = [
     listing for listing in listings
@@ -45,9 +47,7 @@ filtered_listings = [
 ]
 
 # Go through and find car attributes
-for listing in listings:
-    # Print the raw HTML of the listing for debugging
-    print(listing.prettify())
+for listing in filtered_listings:
 
     # Locate the <h3> tag
     h3_tag = listing.find("h3")
@@ -60,8 +60,10 @@ for listing in listings:
     
     print(f"Extracted title: {title}")  # Debug
 
-    # Append data
-    data.append({"Title": title})
+    # Append data only if the title is unique
+    if title != "N/A" and title not in seen_titles:
+        seen_titles.add(title)
+        data.append({"Title": title})
 
 # Close the driver
 driver.quit()
